@@ -1,0 +1,25 @@
+{% extends 'karta/base.html' %}
+
+{% block content %}
+
+<div class="container">
+
+<ul class="list-articles">
+    {% for p in points %}
+    <div class="card">
+        <div class="card-header">
+            Категорія: {{p.cat}}
+        </div>
+        <div class="card-body">
+            <h5 class="card-title">{{p.title}}</h5>
+            <p class="card-text">Інформація: {{p.author}}</p>
+            <p class="card-text">Посилання: {{p.point_url}}</p>
+            <p class="last">Дата cтворення: {{p.date_created|date:"d-m-Y H:i:s"}}</p>
+            <p class="link-read-post"><a href="{{ p.get_absolute_url }}">Додаткова інформація</a></p>
+        </div>
+    </div>
+    </br>
+    {% endfor %}
+</ul>
+</div>
+{% endblock %}

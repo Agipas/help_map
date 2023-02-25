@@ -1,0 +1,30 @@
+from django.db.models import Count
+from django.core.cache import cache
+
+from .models import *
+
+menu = [{'title': 'Головна Сторінка', 'url_name': 'index'},
+        {'title': 'Створити Допомогу', 'url_name': 'add_point'},
+        {'title': 'Відгук', 'url_name': 'contact'},
+        {'title': 'Про нас', 'url_name': 'about'},
+]
+
+
+class DataMixin:
+    paginate_by = 3
+
+    def get_user_context(self, **kwargs):
+        context = kwargs
+        # cats = cache.get('cats')
+        # if not cats:
+        #     cats = Category.objects.filter(woman__is_published=True).annotate(women__count=Count('woman'))
+        #     cache.set('cats', cats, 60)
+        #
+        user_menu = menu.copy()
+        if not self.request.user.is_authenticated:
+            user_menu.pop(1)
+        context['menu'] = user_menu
+        # context['cats'] = cats
+        # if 'cat_selected' not in context:
+        #     context['cat_selected'] = 0
+        return context
