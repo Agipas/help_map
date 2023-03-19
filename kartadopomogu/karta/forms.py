@@ -34,7 +34,24 @@ from .models import *
 #         fields = PointForm.Meta.fields + ['images', ]
 
 
+class PointForm(forms.Form):
+    title = forms.CharField(label='Назва',
+                            max_length=255)
+    cat = forms.ModelChoiceField(label='Категорія',
+                                 queryset=Category.objects.all(),
+                                 required=True)
+    photo = forms.ImageField(label='Основне фото')
+    adds_photo = forms.FileField(label='Додаткові фотографії',
+                                 widget=forms.ClearableFileInput(attrs={'multiple': True}),
+                                 required=False)
+    point_url = forms.CharField(label='Посилання на збір',
+                                max_length=255)
+    content = forms.CharField(label='Інформація',
+                              widget=forms.Textarea)
+
+
 class ContactForm(forms.Form):
-    name = forms.CharField(label='Name', max_length=255)
+    name = forms.CharField(label='Name',
+                           max_length=255)
     email = forms.EmailField(label='Email')
     content = forms.CharField(widget=forms.Textarea(attrs={'cols': 60, 'rows': 10}))

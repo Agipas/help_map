@@ -1,0 +1,108 @@
+{% extends 'karta/base.html' %}
+
+{% block content %}
+
+<!-- Page content-->
+<div class="container mt-5">
+    <div class="row">
+        <div class="col-lg-1"></div>
+        <div class="col-lg-10">
+            <!-- Post content-->
+            <article>
+                <!-- Post header-->
+                <header class="mb-4">
+                    <!-- Post title-->
+                    <h1 class="fw-bolder mb-1">{{point.title}}</h1>
+                    <!-- Post meta content-->
+                    <div class="text-muted fst-italic mb-2">{{point.date_created }}, {{point.author}}</div>
+                    <!-- Post categories-->
+                    <a class="badge bg-secondary text-decoration-none link-light" href="#!">{{point.cat }}</a>
+                </header>
+                <!-- Preview image figure-->
+
+<!--                <figure class="mb-4"><img class="img-fluid rounded"-->
+<!--                                          src="{{ point.photo.url }}" alt="..."/></figure>-->
+                <!-- Post content-->
+                <section class="mb-5">
+                    <h4 class="fw-bolder mb-4 mt-5">Посилання: {{ point.point_url }}</h4>
+                    <p class="fs-5 mb-4">{{ point.content }}</p>
+<!--                    {% for image in images %}-->
+<!--                    <img class="img-fluid rounded"-->
+<!--                                          src="{{ image.image.url }}" alt="..."/>-->
+<!--                    {% endfor %}-->
+                </section>
+            </article>
+        </div>
+
+<div id="carouselExampleIndicators" class="carousel slide" data-bs-ride="true">
+<!--  <div class="carousel-indicators">-->
+<!--    <button type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide-to="0" class="active" aria-current="true" aria-label="Slide 1"></button>-->
+<!--    <button type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide-to="1" aria-label="Slide 2"></button>-->
+<!--    <button type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide-to="2" aria-label="Slide 3"></button>-->
+<!--  </div>-->
+  <div class="carousel-inner">
+      <div class="carousel-item active">
+        <img src="{{point.photo.url}}" class="d-block w-100" alt="...">
+      </div>
+      {% for image in images %}
+          <div class="carousel-item">
+          <img src="{{ image.image.url }}" class="d-block w-100" alt="...">
+        </div>
+      {% endfor %}
+
+  </div>
+  <button class="carousel-control-prev" type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide="prev">
+    <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+    <span class="visually-hidden">Previous</span>
+  </button>
+  <button class="carousel-control-next" type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide="next">
+    <span class="carousel-control-next-icon" aria-hidden="true"></span>
+    <span class="visually-hidden">Next</span>
+  </button>
+</div>
+        <!-- Side widgets-->
+<!--        <div class="col-lg-4">-->
+<!--            &lt;!&ndash; Search widget&ndash;&gt;-->
+<!--            <div class="card mb-4">-->
+<!--                <div class="card-header">Search</div>-->
+<!--                <div class="card-body">-->
+<!--                    <div class="input-group">-->
+<!--                        <input class="form-control" type="text" placeholder="Enter search term..."-->
+<!--                               aria-label="Enter search term..." aria-describedby="button-search"/>-->
+<!--                        <button class="btn btn-primary" id="button-search" type="button">Go!</button>-->
+<!--                    </div>-->
+<!--                </div>-->
+<!--            </div>-->
+<!--            &lt;!&ndash; Categories widget&ndash;&gt;-->
+<!--            <div class="card mb-4">-->
+<!--                <div class="card-header">Categories</div>-->
+<!--                <div class="card-body">-->
+<!--                    <div class="row">-->
+<!--                        <div class="col-sm-6">-->
+<!--                            <ul class="list-unstyled mb-0">-->
+<!--                                <li><a href="#!">Web Design</a></li>-->
+<!--                                <li><a href="#!">HTML</a></li>-->
+<!--                                <li><a href="#!">Freebies</a></li>-->
+<!--                            </ul>-->
+<!--                        </div>-->
+<!--                        <div class="col-sm-6">-->
+<!--                            <ul class="list-unstyled mb-0">-->
+<!--                                <li><a href="#!">JavaScript</a></li>-->
+<!--                                <li><a href="#!">CSS</a></li>-->
+<!--                                <li><a href="#!">Tutorials</a></li>-->
+<!--                            </ul>-->
+<!--                        </div>-->
+<!--                    </div>-->
+<!--                </div>-->
+<!--            </div>-->
+<!--            &lt;!&ndash; Side widget&ndash;&gt;-->
+<!--            <div class="card mb-4">-->
+<!--                <div class="card-header">Side Widget</div>-->
+<!--                <div class="card-body">You can put anything you want inside of these side widgets. They are easy to use,-->
+<!--                    and feature the Bootstrap 5 card component!-->
+<!--                </div>-->
+<!--            </div>-->
+<!--        </div>-->
+    </div>
+</div>
+{% endblock %}

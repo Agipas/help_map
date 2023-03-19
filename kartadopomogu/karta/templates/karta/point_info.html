@@ -1,21 +1,28 @@
 {% extends 'karta/base.html' %}
 
 {% block content %}
-<h1>{{point.title}}</h1>
+<div class="container">
+    <div class="row justify-content-md-center">
+        <div class="content-section col-lg-10 col-md-12 col-sm-12 tutorial-style" style="min-height:65vh;">
+            <legend class="border-bottom mb-4">Інформація: {{point.title}}</legend>
 
-<h5>{{point.content | linebreaks }}</h5>
-<h5>{{point.title }}</h5>
-<h5>{{point.date_created }}</h5>
-<h5>{{point.author }}</h5>
-<h5>{{point.slug }}</h5>
-<h5>{{point.is_published }}</h5>
-<h5>{{point.cat }}</h5>
-<h5>{{point.point_url }}</h5>
 
-{% for i in images %}
-    {% if i.image %}
-    <p><img src="{{i.image}}" class="img-article-left"></p>
-    {% endif %}
-{% endfor %}
+            <h5>{{point.content | linebreaks }}</h5>
+            <h5>{{point.title }}</h5>
+            <h5>{{point.date_created }}</h5>
+            <h5>{{point.author }}, {{point.author.username }}</h5>
+            <h5>{{point.slug }}</h5>
+            <h5>{{point.is_published }}</h5>
+            <h5>{{point.cat }}</h5>
+            <h5>{{point.point_url }}</h5>
+
+            {% for i in images %}
+            {% if i.image %}
+            <p><img src="{{i.image}}" class="img-article-left"></p>
+            {% endif %}
+            {% endfor %}
+        </div>
+    </div>
+</div>
 
 {% endblock %}

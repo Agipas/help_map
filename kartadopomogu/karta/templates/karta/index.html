@@ -1,25 +1,39 @@
 {% extends 'karta/base.html' %}
 
 {% block content %}
+<style>
+.card-img-top {
+    width: 100%;
+    height: 15vw;
+    object-fit: cover;
 
+}
+</style>
 <div class="container">
-
-<ul class="list-articles">
-    {% for p in points %}
-    <div class="card">
-        <div class="card-header">
-            Категорія: {{p.cat}}
-        </div>
-        <div class="card-body">
-            <h5 class="card-title">{{p.title}}</h5>
-            <p class="card-text">Інформація: {{p.author}}</p>
-            <p class="card-text">Посилання: {{p.point_url}}</p>
-            <p class="last">Дата cтворення: {{p.date_created|date:"d-m-Y H:i:s"}}</p>
-            <p class="link-read-post"><a href="{{ p.get_absolute_url }}">Додаткова інформація</a></p>
+    <div class="row justify-content-lg-center">
+        <div class="row row-cols-1 row-cols-md-3 g-4">
+            {% for object in points %}
+            <div class="col-sm">
+                <div class="card h-100">
+                    <a href="point-info/{{ object.slug }}"><img src="{{ object.photo.url }}" class="card-img-top" ></a>
+                    <div class="card-body">
+                        <a href="point-info/{{ object.slug }}"><h5 class="card-title">{{ object.title }}</h5></a>
+                        <p class="card-text">{{object.content | truncatechars:50}}</p>
+                        <a href="{{object.point_url}}">{{object.point_url}}</a>
+                        <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                            <a href="{{ object.get_absolute_url }}">
+                                <button class="btn btn-secondary" type="button">Більше
+                                </button>
+                            </a>
+                        </div>
+                    </div>
+                    <div class="card-footer">
+                        <small class="text-muted">{{ object.date_updated }}</small>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
         </div>
     </div>
-    </br>
-    {% endfor %}
-</ul>
 </div>
 {% endblock %}

@@ -1,15 +1,16 @@
 from django.contrib.auth.views import LoginView
 from django.shortcuts import render, redirect
-from django.contrib.auth import logout, login
+from django.contrib.auth import logout, login, get_user_model
+from django.contrib import messages
 from django.urls import reverse_lazy
 from django.views.generic import CreateView
 from django.utils.decorators import method_decorator
 from django.contrib.auth.decorators import login_required
 
-from .forms import RegisterUserForm, LoginUserForm
+from .forms import RegisterUserForm, LoginUserForm, UserUpdateForm
 from .decorators import user_not_authenticated
 
-from karta.utils import DataMixin
+from karta.utils import DataMixin, menu
 
 
 # Create your views here.
@@ -47,4 +48,29 @@ class LoginUser(DataMixin, LoginView):
 @login_required
 def logout_user(request):
     logout(request)
+    return redirect('index')
+
+
+@login_required
+def profile(request, username):
+    if request.method == 'POST':
+        user = request.user
+        form = UserUpdateForm(request.POST, request.FILES, instance=user)
+        if form.is_valid():
+            user_form = form.save()
+            messages.success(request, f'{user_form.username}, Ваш профіль оновлено!')
+            return redirect('profile', user_form.username)
+
+        for error in list(form.errors):
+            messages.error(request, error)
+
+    user = get_user_model().objects.filter(username=username).first()
+    if user:
+        form = UserUpdateForm(instance=user)
+        return render(
+            request=request,
+            template_name='users/profile.html',
+            context={'form': form, 'menu': menu}
+        )
+
     return redirect('index')
