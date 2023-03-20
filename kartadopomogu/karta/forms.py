@@ -1,37 +1,7 @@
 from django import forms
-from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
-from django.contrib.auth.models import User
-from django.core.exceptions import ValidationError
-# from captcha.fields import CaptchaField
+from multiupload.fields import MultiFileField, MultiMediaField, MultiImageField
 
 from .models import *
-
-
-# class PointForm(forms.ModelForm):
-#     def __init__(self, *args, **kwargs):
-#         super().__init__(*args, **kwargs)
-#         self.fields['cat'].empty_label = "Категорія не вибрана"
-#
-#     class Meta:
-#         model = Point
-#         fields = ['title', 'slug', 'content', 'is_published', 'cat']
-#         widgets = {
-#             'title': forms.TextInput(attrs={'class': 'form-input'}),
-#             'content': forms.Textarea(attrs={'cols': 60, 'rows': 10}),
-#         }
-#     # custom validator def clean_*FIELD*():
-#     def clean_title(self):
-#         title = self.cleaned_data['title']
-#         if len(title) > 200:
-#             raise ValidationError('Длина превышает 200 символов')
-#         return title
-
-
-# class PointFullForm(PointForm): #extending form
-#     images = forms.FileField(widget=forms.ClearableFileInput(attrs={'multiple': True}))
-#
-#     class Meta(PointForm.Meta):
-#         fields = PointForm.Meta.fields + ['images', ]
 
 
 class PointForm(forms.Form):
@@ -40,14 +10,48 @@ class PointForm(forms.Form):
     cat = forms.ModelChoiceField(label='Категорія',
                                  queryset=Category.objects.all(),
                                  required=True)
-    photo = forms.ImageField(label='Основне фото')
-    adds_photo = forms.FileField(label='Додаткові фотографії',
+    photo = forms.ImageField(label='Основне зображення')
+    adds_photo = forms.FileField(label='Додаткові зображення',
                                  widget=forms.ClearableFileInput(attrs={'multiple': True}),
                                  required=False)
     point_url = forms.CharField(label='Посилання на збір',
                                 max_length=255)
     content = forms.CharField(label='Інформація',
                               widget=forms.Textarea)
+    is_published = forms.BooleanField(label='Опублікувати?',
+                                      widget=forms.CheckboxInput,
+                                      required=False)
+
+
+class PointUpdateForm(forms.ModelForm):
+    title = forms.CharField(label='Назва',
+                            max_length=255)
+    cat = forms.ModelChoiceField(label='Категорія',
+                                 queryset=Category.objects.all(),
+                                 required=True)
+    photo = forms.ImageField(label='Основне зображення')
+    point_url = forms.CharField(label='Посилання на збір',
+                                max_length=255)
+    content = forms.CharField(label='Інформація',
+                              widget=forms.Textarea)
+    is_published = forms.BooleanField(label='Опублікувати?',
+                                      widget=forms.CheckboxInput,
+                                      required=False)
+    adds_photo = forms.FileField(label='Нові зображення',
+                                 widget=forms.ClearableFileInput(attrs={'multiple': True}),
+                                 required=False)
+
+    class Meta:
+        model = Point
+        exclude = ['date_created', 'date_created', 'author', 'slug']
+
+
+class ImageUpdateForm(forms.ModelForm):
+    image = forms.ImageField(label='Додаткове зображення', required=False)
+
+    class Meta:
+        model = Image
+        fields = ['image']
 
 
 class ContactForm(forms.Form):

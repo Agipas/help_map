@@ -9,6 +9,7 @@ urlpatterns = [
     path("users-points/", UsersPointPage.as_view(), name='users_points'),
     path("new-point/", CreatePoint.as_view(), name='add_point'),
     path("point-info/<slug:point_slug>", ShowPoint.as_view(), name='point_info'),
+    path("point/<slug:point_slug>-update", UpdatePoint.as_view(), name='point_update'),
     path("about/", about, name='about'),
     path("contact/", contact, name='contact'),
 ]

@@ -18,6 +18,15 @@
                     <!-- Post categories-->
                     <a class="badge bg-secondary text-decoration-none link-light" href="#!">{{point.cat }}</a>
                 </header>
+                {% if point.author == user %}
+                <button type="button" class="btn btn-success">
+                     <a style="color:inherit" href="{% url 'point_update' point.slug %}">Оновити</a>
+                </button>
+                <button type="button" class="btn btn-danger">
+                     <a style="color:inherit" href="{% url 'point_update' point.slug %}">Видалити</a>
+                </button>
+                {% endif %}
+
                 <!-- Preview image figure-->
 
 <!--                <figure class="mb-4"><img class="img-fluid rounded"-->

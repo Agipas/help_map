@@ -1,0 +1,22 @@
+{% extends 'karta/base.html' %}
+{% load crispy_forms_tags %}
+{% block content %}
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-8">
+            <h1 class="mt-2">{{title}}</h1>
+            <hr class="mt-0 mb-4">
+            <form action="{{ point.get_update_url }}" method="post" enctype="multipart/form-data">
+                {% csrf_token %}
+                {{ form|crispy }}
+                {% for photo in adds_photo %}
+                {{ photo|crispy }}
+                {% endfor %}
+                <button type="submit" class="btn btn-success">Оновити</button>
+            </form>
+        </div>
+    </div>
+</div>
+
+
+{% endblock %}

@@ -1,7 +1,10 @@
-from django.views.generic import ListView, DetailView, CreateView, FormView
-from django.shortcuts import render, redirect
+from django.views import View
+from django.views.generic import ListView, DetailView, FormView
+from django.shortcuts import render, redirect, get_object_or_404
+from django.contrib.auth.decorators import login_required
+from django.utils.decorators import method_decorator
 
-from .forms import PointForm
+from .forms import PointForm, PointUpdateForm, ImageUpdateForm
 from .utils import *
 
 
@@ -20,6 +23,7 @@ class PointPage(DataMixin, ListView):
         return Point.objects.filter(is_published=True).select_related('cat')
 
 
+@method_decorator(login_required, name='dispatch')
 class UsersPointPage(PointPage):
     extra_context = {'title': 'Ваші Записи'}
 
@@ -29,7 +33,6 @@ class UsersPointPage(PointPage):
 
 class ShowPoint(DataMixin, DetailView):
     model = Point
-    # template_name = 'karta/point_info.html'
     template_name = 'karta/info.html'
     context_object_name = 'point'
     slug_url_kwarg = 'point_slug'
@@ -42,6 +45,7 @@ class ShowPoint(DataMixin, DetailView):
         return {**context, **c_def}
 
 
+@method_decorator(login_required, name='dispatch')
 class CreatePoint(DataMixin, FormView):
     template_name = 'karta/addpage.html'
     form_class = PointForm
@@ -54,8 +58,7 @@ class CreatePoint(DataMixin, FormView):
         return {**context, **c_def}
 
     def post(self, request, *args, **kwargs):
-        form_class = self.get_form_class()
-        form = self.get_form(form_class)
+        form = self.get_form(self.form_class)
         files = request.FILES.getlist('adds_photo')
         if form.is_valid():
             cleaned_data = form.cleaned_data
@@ -71,12 +74,59 @@ class CreatePoint(DataMixin, FormView):
             return self.form_invalid(form)
 
 
+@method_decorator(login_required, name='dispatch')
+class UpdatePoint(DataMixin, View):
+    title = 'Редагувати Допомогу'
+    template_name = 'karta/updatepage.html'
+
+    @staticmethod
+    def get_data(point_slug):
+        point = get_object_or_404(Point, slug__iexact=point_slug)
+        images = Image.objects.filter(point=point)
+        adds_photo = [ImageUpdateForm(instance=image, prefix=image.pk) for image in images]
+        return point, images, adds_photo
+
+    def get_context(self, point_form, point, adds_photo):
+        context = {'form': point_form,
+                   'point': point,
+                   'title': self.title,
+                   'adds_photo': adds_photo}
+        user_context = self.get_user_context()
+        return {**context, **user_context}
+
+    def get(self, request, point_slug):
+        point, images, adds_photo = self.get_data(point_slug)
+        if point.author != request.user:
+            return redirect(reverse('index'))
+        point_form = PointUpdateForm(instance=point)
+        context = self.get_context(point_form, point, adds_photo)
+        return render(request, self.template_name, context=context)
+
+    def post(self, request, point_slug):
+        point, images, adds_photo = self.get_data(point_slug)
+        if point.author != request.user:
+            return redirect(reverse('index'))
+        files = request.FILES.getlist('adds_photo')
+        point_form = PointUpdateForm(request.POST, instance=point)
+        imgs_to_delete = [int(img.split('-')[0]) for img in request.POST.keys() if 'image-clear' in img]
+        if point_form.is_valid():
+            new_point = point_form.save()
+            Image.objects.filter(id__in=imgs_to_delete).delete()
+            for f in files:
+                Image.objects.create(image=f, point=point)
+            return redirect(new_point)
+        context = self.get_context(point_form, point, adds_photo)
+        return render(request, self.template_name, context=context)
+
+
+@login_required
 def contact(request):
     context = {'title': 'Contact'}
     context = get_user_context(request.user, context)
     return render(request, 'karta/about.html', context)
 
 
+@login_required
 def about(request):
     context = {'title': 'About'}
     context = get_user_context(request.user, context)

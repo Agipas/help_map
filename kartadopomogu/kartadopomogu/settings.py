@@ -42,6 +42,7 @@ INSTALLED_APPS = [
     'karta.apps.KartaConfig',
     'crispy_forms',
     'crispy_bootstrap5',
+    'widget_tweaks',
     'tinymce',
 ]
 
