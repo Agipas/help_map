@@ -1,3 +1,4 @@
+from django.http import HttpResponseRedirect
 from django.views import View
 from django.views.generic import ListView, DetailView, FormView
 from django.shortcuts import render, redirect, get_object_or_404
@@ -16,6 +17,7 @@ class PointPage(DataMixin, ListView):
 
     def get_context_data(self, *, object_list=None, **kwargs):
         context = super().get_context_data(**kwargs)
+        context["cats"] = {point.cat for point in Point.objects.filter(is_published=True).select_related('cat')}
         c_def = self.get_user_context()
         return {**context, **c_def}
 
@@ -23,9 +25,26 @@ class PointPage(DataMixin, ListView):
         return Point.objects.filter(is_published=True).select_related('cat')
 
 
+class PointCategory(PointPage):
+    allow_empty = False
+
+    def get_context_data(self, *, object_list=None, **kwargs):
+        context = super().get_context_data(**kwargs)
+        con = {
+            'title': 'Category ' + self.kwargs['cat_slug'].capitalize(),
+            'cat_selected': context['points'][0].cat_id,
+        }
+        c_def = self.get_user_context(**con)
+        return {**context, **c_def}
+
+    def get_queryset(self):
+        return Point.objects.filter(cat__slug=self.kwargs['cat_slug'], is_published=True).select_related('cat')
+
+
 @method_decorator(login_required, name='dispatch')
 class UsersPointPage(PointPage):
-    extra_context = {'title': 'Ваші Записи'}
+    extra_context = {'title': 'Ваші Записи',
+                     'user_page': True}
 
     def get_queryset(self):
         return Point.objects.filter(author=self.request.user).select_related('cat')
@@ -40,7 +59,9 @@ class ShowPoint(DataMixin, DetailView):
     def get_context_data(self, *, object_list=None, **kwargs):
         context = super().get_context_data(**kwargs)
         images = Image.objects.filter(point=context["point"].id)
+        authors_points = Point.objects.filter(author=context["point"].author)
         context["images"] = images
+        context["authors_points"] = authors_points
         c_def = self.get_user_context(title=self.kwargs['point_slug'].capitalize())
         return {**context, **c_def}
 
@@ -131,3 +152,17 @@ def about(request):
     context = {'title': 'About'}
     context = get_user_context(request.user, context)
     return render(request, 'karta/about.html', context)
+
+
+@login_required
+def delete_point(request, point_slug):
+    point = Point.objects.get(slug=point_slug)
+    if point.author != request.user:
+        return HttpResponseRedirect(reverse('index'))
+    point.delete()
+    return HttpResponseRedirect(reverse('index'))
+
+
+def location_map(request):
+    locations = Point.objects.all()
+    return render(request, 'location_map.html', {'locations': locations})

@@ -44,6 +44,8 @@ INSTALLED_APPS = [
     'crispy_bootstrap5',
     'widget_tweaks',
     'tinymce',
+    'geoposition',
+    # 'googlemaps',
 ]
 
 AUTH_USER_MODEL = 'users.UserModel'

@@ -8,6 +8,7 @@ from django.template.defaultfilters import slugify
 from django.utils import timezone
 from django.urls import reverse
 from tinymce.models import HTMLField
+# from geoposition.fields import GeopositionField
 
 
 class Point(models.Model):
@@ -34,6 +35,7 @@ class Point(models.Model):
     cat = models.ForeignKey("Category", on_delete=models.PROTECT, verbose_name="Категорія")
     point_url = models.CharField(max_length=250, unique=True, null=False, verbose_name="Посилання")
     photo = models.ImageField(default='default/no_image.jpeg', upload_to=image_upload_to)
+    # position = GeopositionField()
 
     def __str__(self):
         return self.title
@@ -67,6 +69,9 @@ class Category(models.Model):
         return super().save(*args, **kwargs)
 
     def get_absolute_url(self):
+        return reverse('category', kwargs={"cat_slug": self.slug})
+
+    def get_user_absolute_url(self):
         return reverse('category', kwargs={"cat_slug": self.slug})
 
 
