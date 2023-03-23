@@ -14,15 +14,13 @@ class PointPage(DataMixin, ListView):
     template_name = 'karta/index.html'
     context_object_name = 'points'
     extra_context = {'title': 'Головна Сторінка'}
+    queryset = Point.objects.filter(is_published=True).select_related('cat')
 
     def get_context_data(self, *, object_list=None, **kwargs):
         context = super().get_context_data(**kwargs)
         context["cats"] = {point.cat for point in Point.objects.filter(is_published=True).select_related('cat')}
         c_def = self.get_user_context()
         return {**context, **c_def}
-
-    def get_queryset(self):
-        return Point.objects.filter(is_published=True).select_related('cat')
 
 
 class PointCategory(PointPage):
